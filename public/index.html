@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>X Bolsonaro | Publicações Pela Liberdade de Expressão</title>
+  <style>
+    :root { --blue:#193c87; --blue-light:#eaf0fc; --ink:#172033; --muted:#667185; --line:#e3e8f0; --bg:#f3f6fb; --white:#fff; --radius:18px; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font:15px/1.5 system-ui,-apple-system,'Segoe UI',Roboto,Arial,sans-serif; }
+    button, input, textarea { font:inherit; }
+    button { cursor:pointer; }
+    button:disabled { opacity:.55; cursor:wait; }
+    .topbar { position:sticky; top:0; z-index:5; background:var(--blue); color:white; box-shadow:0 3px 18px #152d6224; }
+    .topbar-inner { max-width:1040px; margin:auto; padding:15px 22px; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .brand { display:flex; align-items:center; gap:12px; font-size:19px; font-weight:800; letter-spacing:-.4px; }
+    .logo { width:36px; height:36px; border-radius:12px; display:grid; place-items:center; background:white; color:var(--blue); font-size:20px; font-weight:900; }
+    .topbar small { color:#e1e9fc; font-size:12px; font-weight:500; }
+    .layout { max-width:1040px; padding:27px 18px 55px; margin:auto; display:grid; grid-template-columns:minmax(0,1fr) 290px; gap:24px; align-items:start; }
+    .main, .sidebar { min-width:0; }
+    .card { background:var(--white); border:1px solid var(--line); border-radius:var(--radius); box-shadow:0 5px 24px #21355809; margin-bottom:18px; overflow:hidden; }
+    .composer, .search-card, .about-card { padding:20px; }
+    .author { display:flex; align-items:center; gap:11px; }
+    .avatar { width:43px; height:43px; border-radius:50%; background:#e5edff; color:var(--blue); display:grid; place-items:center; font-size:23px; flex:none; }
+    .name { font-weight:760; font-size:15px; }
+    .handle { color:var(--muted); font-size:12px; }
+    textarea { width:100%; border:0; outline:0; resize:vertical; min-height:115px; margin-top:17px; color:var(--ink); background:transparent; }
+    textarea::placeholder { color:#929cb0; }
+    .preview { position:relative; margin:8px 0 14px; display:none; }
+    .preview img { width:100%; max-height:320px; object-fit:contain; display:block; border-radius:14px; background:#f0f2f7; }
+    .remove-image { position:absolute; top:10px; right:10px; border:0; color:white; background:#19243dcc; border-radius:50%; width:34px; height:34px; font-size:20px; }
+    .file-name { font-size:12px; color:var(--muted); margin-top:7px; overflow-wrap:anywhere; }
+    .composer-footer { display:flex; align-items:center; justify-content:space-between; border-top:1px solid var(--line); padding-top:14px; gap:12px; }
+    .actions { display:flex; gap:5px; align-items:center; }
+    .icon-btn { display:inline-grid; place-items:center; border:0; border-radius:10px; min-width:38px; height:38px; color:var(--blue); background:transparent; font-size:21px; }
+    .icon-btn:hover { background:var(--blue-light); }
+    .count { color:var(--muted); font-size:12px; margin-left:6px; }
+    .btn { border:0; border-radius:999px; padding:10px 18px; background:var(--blue); color:white; font-weight:700; white-space:nowrap; }
+    .btn:hover { background:#102e70; }
+    .btn-outline { background:white; border:1px solid #c9d5ee; color:var(--blue); }
+    .btn-outline:hover { background:var(--blue-light); }
+    .heading { display:flex; justify-content:space-between; gap:12px; align-items:center; margin:28px 2px 14px; }
+    h1, h2, h3, p { margin-top:0; }
+    h2 { margin-bottom:0; font-size:20px; letter-spacing:-.45px; }
+    h3 { font-size:16px; margin-bottom:14px; }
+    .post { padding:19px 20px 14px; }
+    .post-text { margin:15px 0 0; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .post-image { display:block; width:100%; max-height:530px; object-fit:contain; background:#eef2f8; border-radius:14px; margin-top:13px; border:1px solid var(--line); }
+    .post-time { margin-top:12px; color:var(--muted); font-size:12px; }
+    .post-footer { margin-top:13px; border-top:1px solid var(--line); padding-top:11px; display:flex; justify-content:space-around; color:#7e899b; }
+    .post-footer span { display:inline-flex; align-items:center; gap:6px; font-size:13px; }
+    .status { text-align:center; padding:28px 15px; color:var(--muted); }
+    .status.error { color:#a32b32; }
+    .search-row { display:flex; gap:9px; }
+    .search-row input { min-width:0; width:100%; border:1px solid #cfd8e7; border-radius:10px; padding:10px 12px; outline-color:#8facdc; }
+    .search-result { margin-top:15px; }
+    .search-result .card { margin-bottom:0; box-shadow:none; }
+    .search-result .post { padding:14px; }
+    .about-card p { color:var(--muted); font-size:13px; margin-bottom:0; }
+    .message { padding:11px 14px; border-radius:10px; margin:12px 0; background:#eaf6ed; color:#24613d; display:none; overflow-wrap:anywhere; }
+    .message.error { background:#fcecec; color:#9d2935; }
+    .skeleton { height:110px; background:linear-gradient(90deg,#f2f5fa,#e8edf5,#f2f5fa); background-size:200% 100%; animation:shine 1.2s infinite; margin-bottom:12px; border-radius:var(--radius); }
+    @keyframes shine { to { background-position:-200% 0; } }
+    @media (max-width:760px) { .layout { display:block; padding:16px 12px 40px; } .sidebar { display:flex; flex-direction:column; } .topbar-inner { padding:12px 16px; } .brand { font-size:17px; } .composer, .search-card, .about-card { padding:16px; } .post { padding:16px; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand"><div class="logo">XB</div><div>X Bolsonaro <small>· Publicações Pela Liberdade de Expressão</small></div></div>
+      <button id="topRefresh" class="icon-btn" aria-label="Atualizar feed" title="Atualizar feed" style="color:white">⟳</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <main class="main">
+      <section class="card composer" aria-labelledby="composerTitle">
+        <div class="author"><div class="avatar" aria-hidden="true">●</div><div><div id="composerTitle" class="name">Nova publicação</div><div class="handle">Compartilhe algo com a comunidade</div></div></div>
+        <form id="postForm">
+          <label for="texto" class="sr-only" style="position:absolute;left:-9999px">Texto da publicação</label>
+          <textarea id="texto" maxlength="280" placeholder="O que está acontecendo?"></textarea>
+          <div class="preview" id="preview">
+            <img id="previewImg" alt="Prévia da imagem selecionada" />
+            <button type="button" class="remove-image" id="removeImage" title="Remover foto" aria-label="Remover foto">×</button>
+            <div class="file-name" id="fileName"></div>
+          </div>
+          <input type="file" id="imagem" accept="image/jpeg,image/png,image/webp" hidden />
+          <div class="composer-footer">
+            <div class="actions">
+              <button type="button" class="icon-btn" id="chooseImage" title="Escolher foto" aria-label="Escolher foto">▧</button>
+              <span class="count" id="charCount">0/280</span>
+            </div>
+            <button type="submit" class="btn" id="publishBtn">Publicar</button>
+          </div>
+        </form>
+        <div id="message" class="message" role="status"></div>
+      </section>
+
+      <div class="heading"><h2>Feed de publicações</h2><button id="refresh" class="btn btn-outline">⟳ Atualizar</button></div>
+      <section id="feed" aria-live="polite"><div class="skeleton"></div><div class="skeleton"></div></section>
+    </main>
+
+    <aside class="sidebar">
+      <section class="card search-card">
+        <h3>Buscar publicação</h3>
+        <form id="searchForm" class="search-row">
+          <input id="id" type="number" min="0" step="1" placeholder="ID inicial" required aria-label="ID inicial" />
+          <button class="btn" type="submit" id="searchBtn">Buscar</button>
+        </form>
+        <div id="searchResult" class="search-result" aria-live="polite"></div>
+      </section>
+    </aside>
+  </div>
+
+  <script>
+    // Se abrir a página em localhost:3000, usa a mesma origem.
+    // No Live Server (ex.: localhost:5500), usa a API da porta 3000.
+    const API = location.port === '3000' ? location.origin : 'http://localhost:3000';
+    const $ = (id) => document.getElementById(id);
+    const feed = $('feed');
+    let selectedImage = null;
+    let previewUrl = null;
+    let feedBusy = false;
+
+    const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' })[c]);
+    const absoluteImageUrl = (value) => {
+      if (!value || typeof value !== 'string') return null;
+      try {
+        const url = new URL(value, API);
+        return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
+      } catch { return null; }
+    };
+    const dateLabel = (value) => {
+      const date = new Date(value);
+      return value && !Number.isNaN(date.getTime())
+        ? date.toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' }) : '';
+    };
+    const icon = `<span aria-hidden="true">●</span>`;
+
+    function postCard(post) {
+      const id = escapeHtml(post.id ?? '-');
+      const texto = escapeHtml(post.texto ?? '');
+      const imagem = absoluteImageUrl(post.imagemUrl);
+      const data = escapeHtml(dateLabel(post.criadoEm));
+      const card = document.createElement('article');
+      card.className = 'card post';
+      card.innerHTML = `
+        <div class="author"><div class="avatar">${icon}</div><div><div class="name">Usuário</div><div class="handle">@usuario · Post #${id}</div></div></div>
+        ${texto ? `<p class="post-text">${texto}</p>` : ''}
+        ${imagem ? `<img class="post-image" alt="Imagem da publicação ${id}" loading="lazy" />` : ''}
+        ${data ? `<div class="post-time">${data}</div>` : ''}
+        <div class="post-footer" aria-label="Ações futuras"><span title="Comentários ainda não disponíveis">♧ Comentários</span><span title="Curtidas ainda não disponíveis">♡ Curtir</span><span title="Compartilhamento ainda não disponível">↗ Compartilhar</span></div>`;
+      if (imagem) card.querySelector('.post-image').src = imagem;
+      return card;
+    }
+
+    function showMessage(text, error = false) {
+      const el = $('message');
+      el.textContent = text;
+      el.classList.toggle('error', error);
+      el.style.display = 'block';
+    }
+    function showStatus(target, text, error = false) {
+      target.replaceChildren();
+      const el = document.createElement('div');
+      el.className = 'status' + (error ? ' error' : '');
+      el.textContent = text;
+      target.appendChild(el);
+    }
+    async function apiJson(url, options) {
+      const response = await fetch(url, options);
+      const raw = await response.text();
+      let data;
+      try { data = JSON.parse(raw); }
+      catch { throw new Error('A API não retornou JSON válido. Verifique o servidor.'); }
+      if (!response.ok) throw new Error(data.erro || data.mensagem || `Erro HTTP ${response.status}`);
+      return data;
+    }
+
+    async function loadFeed() {
+      if (feedBusy) return;
+      feedBusy = true;
+      $('refresh').disabled = true;
+      $('topRefresh').disabled = true;
+      if (!feed.children.length) showStatus(feed, 'Carregando publicações...');
+      try {
+        const data = await apiJson(`${API}/feed`);
+        if (!Array.isArray(data)) throw new Error('Formato de feed inesperado.');
+        data.sort((a, b) => Number(b.id) - Number(a.id));
+        feed.replaceChildren();
+        if (!data.length) showStatus(feed, 'Nenhuma publicação ainda. Seja o primeiro a publicar!');
+        else data.forEach((post) => feed.appendChild(postCard(post)));
+      } catch (error) {
+        showStatus(feed, `Não foi possível carregar o feed: ${error.message}`, true);
+      } finally {
+        feedBusy = false;
+        $('refresh').disabled = false;
+        $('topRefresh').disabled = false;
+      }
+    }
+
+    function clearSelectedImage() {
+      selectedImage = null;
+      $('imagem').value = '';
+      $('preview').style.display = 'none';
+      $('previewImg').removeAttribute('src');
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewUrl = null;
+    }
+    $('chooseImage').addEventListener('click', () => $('imagem').click());
+    $('removeImage').addEventListener('click', clearSelectedImage);
+    $('imagem').addEventListener('change', () => {
+      const file = $('imagem').files?.[0];
+      if (!file) return;
+      if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {
+        clearSelectedImage(); showMessage('Selecione uma imagem JPG, PNG ou WebP.', true); return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        clearSelectedImage(); showMessage('A foto deve ter no máximo 5 MB.', true); return;
+      }
+      clearSelectedImage();
+      selectedImage = file;
+      previewUrl = URL.createObjectURL(file);
+      $('previewImg').src = previewUrl;
+      $('fileName').textContent = file.name;
+      $('preview').style.display = 'block';
+    });
+    $('texto').addEventListener('input', () => { $('charCount').textContent = `${$('texto').value.length}/280`; });
+
+    $('postForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const texto = $('texto').value.trim();
+      if (!texto && !selectedImage) { showMessage('Escreva algo ou selecione uma foto.', true); return; }
+      const button = $('publishBtn');
+      button.disabled = true; button.textContent = 'Publicando...';
+      $('chooseImage').disabled = true;
+      try {
+        const form = new FormData();
+        form.append('texto', texto);
+        if (selectedImage) form.append('imagem', selectedImage, selectedImage.name);
+        await apiJson(`${API}/salvar`, { method:'POST', body:form });
+        $('texto').value = '';
+        $('charCount').textContent = '0/280';
+        clearSelectedImage();
+        showMessage('Publicação realizada com sucesso!');
+        await loadFeed();
+      } catch (error) {
+        showMessage(`Erro ao publicar: ${error.message}`, true);
+      } finally {
+        button.disabled = false; button.textContent = 'Publicar';
+        $('chooseImage').disabled = false;
+      }
+    });
+
+    $('searchForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const id = Number($('id').value);
+      const target = $('searchResult');
+      if (!Number.isSafeInteger(id) || id < 0) { showStatus(target, 'Informe um ID inteiro válido.', true); return; }
+      $('searchBtn').disabled = true;
+      showStatus(target, 'Buscando...');
+      try {
+        const post = await apiJson(`${API}/buscar?id=${encodeURIComponent(id)}`);
+        target.replaceChildren(postCard(post));
+      } catch (error) {
+        showStatus(target, error.message, true);
+      } finally { $('searchBtn').disabled = false; }
+    });
+
+    $('refresh').addEventListener('click', loadFeed);
+    $('topRefresh').addEventListener('click', loadFeed);
+    loadFeed();
+  </script>
+</body>
+</html>
