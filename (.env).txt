@@ -1,0 +1,5 @@
+SUPABASE_URL=https://ywuuipztqcvoesirplnu.supabase.co
+SUPABASE_PUBLISHABLE_KEY=sb_publishable_STbZMx9qO3xAQzo2JoPoHA_dAnYg_J6
+SUPABASE_SECRET_KEY=sb_secret_8V8JAeogvPkArQKxBwlAAw_IONtSDA9
+SUPABASE_JWKS_URL=https://ywuuipztqcvoesirplnu.supabase.co/auth/v1/.well-known/jwks.json
+FIREBASE_API_KEY=AIzaSyBpasjG3rL2MK9u4s1sVNUqFjT2HpV21H0
